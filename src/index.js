@@ -1,10 +1,18 @@
 import express from 'express'
-import './config.js'
+import cors from 'cors'
 import { webScraping } from './scrapingPly.js'
+import './config.js'
 
 const app = express()
 const router = express.Router()
 const port = process.env.PORT || 3000
+
+app.use(
+  cors({
+    origin: ['http://localhost:3000', 'https://seocheckai.com'],
+    methods: ['GET', 'POST'],
+  })
+)
 
 app.use(express.json())
 
