@@ -1,8 +1,13 @@
 import { chromium } from 'playwright'
 
 export async function webScraping({ url }) {
+  // const browser = await chromium.launch({
+  //   headless: true,
+  // })
   const browser = await chromium.launch({
-    headless: true,
+    // executablePath: '/usr/bin/chromium-browser',
+    args: ['--disable-dev-shm-usage', '--disable-setuid-sandbox', '--no-sandbox'],
+    chromiumSandbox: false,
   })
 
   const page = await browser.newPage()
