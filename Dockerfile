@@ -2,8 +2,7 @@
 
 # Adjust NODE_VERSION as desired
 ARG NODE_VERSION=20.13.1
-# FROM node:${NODE_VERSION}-slim as base
-FROM node:20-bookworm as base
+FROM node:${NODE_VERSION}-slim as base
 
 LABEL fly_launch_runtime="Node.js"
 
@@ -13,17 +12,12 @@ WORKDIR /app
 # Set production environment
 ENV NODE_ENV="production"
 
-
 # Throw-away build stage to reduce size of final image
 FROM base as build
 
 # Install packages needed to build node modules
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
-
-RUN npx playwright install-deps
-
-RUN npx playwright install chromium
 
 # Install node modules
 COPY --link package-lock.json package.json ./
@@ -32,18 +26,20 @@ RUN npm ci --include=dev
 # Copy application code
 COPY --link . .
 
-# Build application
-# RUN npm run build
-
 # Remove development dependencies
 RUN npm prune --omit=dev
 
-
-# Final stage for app image
+#Final stage for app image
 FROM base
 
-# Copy built application
+# Install dependencies of Playwright
+RUN npx playwright install-deps
+
+# Install Chromium
+RUN npx playwright install chromium
+
 COPY --from=build /app /app
+# COPY --from=build /root/.cache /root/.cache
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
