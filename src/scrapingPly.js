@@ -1,11 +1,7 @@
 import { chromium } from 'playwright'
 
 export async function webScraping({ url }) {
-  // const browser = await chromium.launch({
-  //   headless: true,
-  // })
   const browser = await chromium.launch({
-    // executablePath: '/usr/bin/chromium-browser',
     args: ['--disable-dev-shm-usage', '--disable-setuid-sandbox', '--no-sandbox'],
     chromiumSandbox: false,
   })
@@ -55,18 +51,6 @@ export async function webScraping({ url }) {
   const schemaMarkup = await page.$$eval('script[type="application/ld+json"]', scripts =>
     scripts.map(script => script.textContent)
   )
-
-  // console.log('Title:', title)
-  // console.log('Description:', description)
-  // console.log('H1:', h1)
-  // console.log('Images:', images)
-  // console.log('Links:', links)
-  // console.log('Schema Markup JSON-LD:', schemaMarkup)
-  // console.log('OG title:', OGtitle)
-  // console.log('OG description:', OGdescription)
-  // console.log('OG image:', OGimage)
-  // console.log('OG url:', OGurl)
-  // console.log('-----------------------')
 
   await browser.close()
 

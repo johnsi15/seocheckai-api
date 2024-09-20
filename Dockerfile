@@ -23,6 +23,9 @@ RUN apt-get update -qq && \
 COPY --link package-lock.json package.json ./
 RUN npm ci --include=dev
 
+# Install Chromium
+RUN npx playwright install chromium
+
 # Copy application code
 COPY --link . .
 
@@ -35,11 +38,9 @@ FROM base
 # Install dependencies of Playwright
 RUN npx playwright install-deps
 
-# Install Chromium
-RUN npx playwright install chromium
-
 COPY --from=build /app /app
-# COPY --from=build /root/.cache /root/.cache
+COPY --from=build /app/node_modules /app/node_modules
+COPY --from=build /root/.cache /root/.cache
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
